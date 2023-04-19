@@ -326,31 +326,6 @@ template_str = '''
 </html>
 '''
 
-old_template_str = '''
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>iMessage Stats</title>
-</head>
-<body>
-   <h1>Welcome to iMessage Stats</h1>
-   <h3>You have sent and receieved {{ numTotalTexts }} total messages</h3>
-   <h3>That is {{ numTotalChars }} characters and {{ numTotalWords }} words!</h3>
-   <h3>You sent and receieved {{ numAttachments }} attachments over text</h3>
-   <h3>There are {{ numConvos }} different conversations (Individual + Group) in your library</h3>
-   <h3>Your first text was sent on {{ firstText }}  and you have averaged {{ textPerDay }}  texts per day over {{ numDays }} days</h3>
-   <img src="figure1.png" alt="TODO">
-   <img src="figure2.png" alt="TODO">
-   <img src="figure3.png" alt="TODO">
-   <img src="figure4.png" alt="TODO">
-   <img src="figure5.png" alt="TODO">
-   <img src="figure6.png" alt="TODO">
-   <img src="figure7.png" alt="TODO">
-</body>
-</html>
-'''
-
 # Create a Jinja2 template from the HTML string
 template = Template(template_str)
 

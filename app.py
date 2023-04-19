@@ -7,6 +7,9 @@ from jinja2 import Template
 import webbrowser
 import os
 
+# Make the graphs have a black background
+plt.style.use('dark_background')
+
 con = sqlite3.connect("/Users/milenpatel/Desktop/chat.db", check_same_thread=False)
 cur = con.cursor()
 
@@ -144,16 +147,186 @@ plt.savefig('figure6.png')
 labs = []
 vals = []
 for row in cur.execute('select count(ROWID), mime_type FROM attachment GROUP BY mime_type ORDER BY count(ROWID) DESC LIMIT 5;'):
-    if row[1] != "":
+    if row[1] is not None:
         vals.append(row[0])
         labs.append(row[1])
 
 plt.figure()
 plt.title("Breakdown of Attachements Sent")
 plt.pie(vals, labels = labs, autopct='%1.1f%%', shadow=True, startangle=90)
-plt.savefig('figure6.png')
+plt.savefig('figure7.png')
 
 template_str = '''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iMessage Stats</title>
+	<style>
+		img {
+			margin-left: auto;
+			margin-right: auto;
+  			width: 50%;
+			display: block;
+		}
+
+		body {
+			padding: 0px; 
+			margin: 0; 
+			// overflow: hidden;
+		}
+		* {transition: all 1s cubic-bezier(.25,.8,.25,1); 
+
+		font-family: 'Montserrat', sans-serif;
+		}
+        
+        p {
+			color: #fff;
+			width: 60%; display: block; margin: 0 auto;
+			font-size: 70px;
+		  	text-align: right; font-weight: bold;
+		}
+		
+		.screen {
+			background: #000; 
+			width: 100vw;
+		}
+
+		.buttons {
+		    position: fixed;
+		    bottom: 0;
+		    width: 100%;
+		    height: 60px;
+		    display: flex;
+		    justify-content: center;
+		    padding: 20px;
+		}
+		
+		.card {
+			width: 100%; 
+			display: block;
+			transform-style: preserve-3d; 
+		   //transition-delay: 0.25s;
+		}
+		
+		
+		.dcard {
+			position: relative; 
+			display: block;
+			height: 100vh;
+		    width: 100vw;
+			perspective: 00px;
+		}
+		.col-md-12, .col-md-4 {margin-bottom: 30px;}
+		
+		.col-md-12 .dcard {perspective: 3000px;}
+		
+		.frame {
+			display: block; 
+			width: 100%;   
+			position: absolute; 
+			top: 10%; 
+			left: 50%; 
+			transform: translateX(-50%);     
+			transform-style: preserve-3d; 
+		} 
+		
+		a.btn {background: #d3f971; border-radius: 30px; color: #000; padding: 10px 20px; line-height: 36px; text-decoration: none; margin: 0px 10px;} 
+		a.btn-ghost {background: #000; border-radius: 30px; color: #d3f971; border: 2px solid #d3f971; padding: 10px 20px;}
+		
+		p {
+			color: #fff;   
+			width: 60%; display: block; margin: 0 auto;
+			font-size: 70px;
+		  	text-align: right; font-weight: bold;
+		}
+
+		p:nth-child(odd) {
+			text-align: left;
+			transform: translateZ(70px); position: relative;
+		}
+		
+		p:nth-child(1) {
+		  color: #d3f971;
+		}
+		p:nth-child(2) {
+		  color: #4b917d;
+		}
+		p:nth-child(3) {
+		  color: #fff;
+		}
+		p:nth-child(4) {
+		  color: #ee209c;
+		}
+		
+		p.underline {font-size: 28px; text-align: center; margin-top: 50px; color: #d3f971;}
+		
+		.trigger {position: absolute; height: 33.333333%; width: 33.333333%; display: block; z-index: 2; 
+		
+		  &:nth-child(1){  left: 0%; top: 0%;
+		    &:hover ~ .card {transform: rotateY(8deg) rotateX(-5deg);}
+		   }
+		  &:nth-child(2){  left: 33.333333%; top: 0%;
+		    &:hover ~ .card {transform: rotateY(0deg) rotateX(-5deg);;}
+		   }
+		  &:nth-child(3){  left: 66.666666%; top: 0%;
+		    &:hover ~ .card {transform: rotateY(-8deg) rotateX(-5deg);}
+		   }
+		  &:nth-child(4){  left: 0%; top: 33.333333%;
+		    &:hover ~ .card {transform: rotateY(8deg);}
+		   }
+		  &:nth-child(5){  left: 33.333333%; top: 33.333333%;
+		    &:hover ~ .card {transform: rotateY(0deg) rotateX(0deg);}
+		   }
+		  &:nth-child(6){  left: 66.666666%; top: 33.333333%;
+		    &:hover ~ .card {transform: rotateY(-8deg) rotateX(0deg);}
+		   }
+		  &:nth-child(7){  left: 0%; top: 66.666666%;
+		    &:hover ~ .card {transform: rotateY(8deg) rotateX(5deg);}
+		   }
+		  &:nth-child(8){  left: 33.333333%; top: 66.666666%;
+		    &:hover ~ .card {transform: rotateY(0deg) rotateX(5deg);}
+		   }
+		  &:nth-child(9){  left: 66.666666%; top: 66.666666%;
+		    &:hover ~ .card {transform: rotateY(-8deg) rotateX(5deg);}
+		   }
+		}
+		
+		
+		
+			
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="screen">
+			<div class="card">
+				<p style="font-size:100px">Welcome to</p>
+				<p style="font-size:100px">iMessage Stats</p>
+				<p style="color:black">_</p>
+   				<p>You have sent and receieved {{ numTotalTexts }} total messages</p>
+   				<p>That is {{ numTotalChars }} characters and {{ numTotalWords }}  words!</p>
+				<p style="color:black">_</p>
+   				<p>You sent and receieved {{ numAttachments }} attachments over text</p>
+				<p style="color:black">_</p>
+   				<p>There are {{ numConvos }} different conversations (Individual + Group) in your library</p>
+				<p style="color:black">_</p>
+   				<p>Your first text was sent on {{ firstText }}  and you have averaged {{ textPerDay }} texts per day over {{ numDays }} days</p>
+   				<img src="figure1.png" alt="TODO">
+   				<img src="figure2.png" alt="TODO">
+   				<img src="figure3.png" alt="TODO">
+   				<img src="figure4.png" alt="TODO">
+   				<img src="figure5.png" alt="TODO">
+   				<img src="figure6.png" alt="TODO">
+   				<img src="figure7.png" alt="TODO">
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+'''
+
+old_template_str = '''
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -165,8 +338,8 @@ template_str = '''
    <h3>You have sent and receieved {{ numTotalTexts }} total messages</h3>
    <h3>That is {{ numTotalChars }} characters and {{ numTotalWords }} words!</h3>
    <h3>You sent and receieved {{ numAttachments }} attachments over text</h3>
-   <h3>There are {{ numConvos }} different conversations (Individual + Group) in your library<h3>
-   <h3>Your first text was sent on {{ firstText }}  and you have averaged {{ textPerDay }}  texts per day over {{ numDays }} days<h3>
+   <h3>There are {{ numConvos }} different conversations (Individual + Group) in your library</h3>
+   <h3>Your first text was sent on {{ firstText }}  and you have averaged {{ textPerDay }}  texts per day over {{ numDays }} days</h3>
    <img src="figure1.png" alt="TODO">
    <img src="figure2.png" alt="TODO">
    <img src="figure3.png" alt="TODO">

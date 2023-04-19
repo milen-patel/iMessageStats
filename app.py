@@ -9,6 +9,8 @@ import os
 
 # Make the graphs have a black background
 plt.style.use('dark_background')
+plt.rcParams.update({'text.color': "white",
+                     'axes.labelcolor': "white"})
 
 con = sqlite3.connect("/Users/milenpatel/Desktop/chat.db", check_same_thread=False)
 cur = con.cursor()
@@ -61,7 +63,7 @@ ax.bar(x_axis, y_axis, width=w, align='center')
 ax.set_xticks(x_axis);
 ax.set_xticklabels(x_labels, rotation=90);
 
-plt.title("TITLE")
+plt.title("Your Top 10 Most Frequent Texters")
 plt.xlabel("Phone Numbers")
 plt.ylabel("Total Messages (Sent + Receieved)")
 plt.xticks(rotation = -80)
@@ -88,8 +90,8 @@ plt.xticks(x, hours, rotation=45)
 plt.title("Your Texting Activity by Hour of the Day");
 plt.ylabel("Total Texts Sent/Receieved at Hour")
 plt.xlabel("Hour of Day")
-plt.bar(x, send_arr, color='r')
-plt.bar(x, recv_arr, bottom=send_arr, color='b')
+plt.bar(x, send_arr, color='#5DD181')
+plt.bar(x, recv_arr, bottom=send_arr, color='#5DB5D1')
 plt.legend(['Sent', 'Receieved'], loc='upper left')
 plt.savefig('figure2.png')
 
@@ -101,19 +103,10 @@ for row in cur.execute("SELECT strftime('%Y-%m-%d', datetime(message.date / 1000
    values.append(row[1])
 
 plt.figure()
+plt.title("Number of Texts per Day vs Time")
 plt.plot(dates, values)
 plt.gcf().autofmt_xdate()
 plt.savefig('figure3.png')
-
-import seaborn as sns
-sns.set_theme()
-
-plt.figure()
-data = pd.DataFrame({'X': dates, 'Y': values})
-sns.lineplot(data, x='X', y='Y', color='g')
-plt.savefig('figure4.png')
-
-
 
 # Now we look at % of texts sent vs. receieved
 numSent = 0
@@ -126,7 +119,7 @@ for row in cur.execute('SELECT is_from_me, COUNT(*) FROM message GROUP BY is_fro
 
 plt.figure()
 plt.title("Ratio of Texts Sent to Receieved")
-plt.pie([numSent, numGot], labels = ['Sent', 'Receieved'], autopct='%1.1f%%', shadow=True, startangle=90)
+plt.pie([numSent, numGot], labels = ['Sent', 'Receieved'], autopct='%1.1f%%',startangle=90, wedgeprops = { 'linewidth' : 3, 'edgecolor' : 'black' })
 plt.savefig('figure5.png')
 
 # Look at iMessage vs SMS
@@ -318,7 +311,6 @@ template_str = '''
    				<img src="figure4.png" alt="TODO">
    				<img src="figure5.png" alt="TODO">
    				<img src="figure6.png" alt="TODO">
-   				<img src="figure7.png" alt="TODO">
 			</div>
 		</div>
 	</div>
